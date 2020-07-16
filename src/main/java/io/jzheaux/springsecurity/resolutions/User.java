@@ -38,6 +38,14 @@ public class User implements Serializable {
   @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   Collection<UserAuthority> userAuthorities = new ArrayList<>();
 
+  public User(User user) {
+    this.id = user.id;
+    this.username = user.username;
+    this.password = user.password;
+    this.userAuthorities = user.userAuthorities;
+    this.enabled = user.enabled;
+  }
+
   public Collection<UserAuthority> getUserAuthorities() {
     return Collections.unmodifiableCollection(this.userAuthorities);
   }

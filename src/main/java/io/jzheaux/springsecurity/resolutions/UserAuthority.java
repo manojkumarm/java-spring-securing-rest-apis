@@ -29,6 +29,12 @@ public class UserAuthority {
   public UserAuthority() {
   }
 
+  public UserAuthority(UserAuthority ua) {
+    this.id = ua.id;
+    this.user = ua.user;
+    this.authority = ua.authority;
+  }
+
 
   public UUID getId() {
     return id;
