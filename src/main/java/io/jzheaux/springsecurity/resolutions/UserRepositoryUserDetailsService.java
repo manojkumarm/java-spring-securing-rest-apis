@@ -1,7 +1,7 @@
 package io.jzheaux.springsecurity.resolutions;
 
 import java.util.Collection;
-import java.util.stream.Collectors;
+import java.util.HashSet;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,22 +17,37 @@ public class UserRepositoryUserDetailsService implements UserDetailsService {
     this.users = users;
   }
 
+  private BridgeUser map(User user) {
+    Collection<GrantedAuthority> authorities = new HashSet<>();
+    for (UserAuthority userAuthority : user.getUserAuthorities()) {
+      String authority = userAuthority.getAuthority();
+      if ("ROLE_ADMIN".equals(authority)) {
+        authorities.add(new SimpleGrantedAuthority("resolution:read"));
+        authorities.add(new SimpleGrantedAuthority("resolution:write"));
+      }
+      authorities.add(new SimpleGrantedAuthority(authority));
+    }
+    return new BridgeUser(user, authorities);
+  }
+
   @Override
   public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-    return this.users.findByUsername(s).map(BridgeUser::new)
+    return this.users.findByUsername(s).map(this::map)
         .orElseThrow(() -> new UsernameNotFoundException("invalid user"));
   }
 
   private static class BridgeUser extends User implements UserDetails {
 
-    public BridgeUser(User user) {
+    private final Collection<GrantedAuthority> authorities;
+
+    public BridgeUser(User user,
+        Collection<GrantedAuthority> authorities) {
       super(user);
+      this.authorities = authorities;
     }
 
-    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-      return this.userAuthorities.stream().map(UserAuthority::getAuthority).map(
-          SimpleGrantedAuthority::new).collect(Collectors.toList());
+      return this.authorities;
     }
 
     @Override
