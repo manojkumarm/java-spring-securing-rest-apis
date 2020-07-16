@@ -30,7 +30,7 @@ public class ResolutionInitializer implements SmartInitializingSingleton {
 
     User haswrite = new User("haswrite",
         "{bcrypt}$2a$10$MywQEqdZFNIYnx.Ro/VQ0ulanQAl34B5xVjK2I/SDZNVGS5tHQ08W");
-    hasread.grantAuthority("resolution:write");
+    haswrite.grantAuthority("resolution:write");
     this.users.save(haswrite);
 
     this.resolutions.save(new Resolution("Read War and Peace", "user"));
