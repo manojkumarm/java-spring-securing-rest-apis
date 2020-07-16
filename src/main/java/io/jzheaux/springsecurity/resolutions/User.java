@@ -16,15 +16,26 @@ public class User implements Serializable {
   String username;
 
   @Column
+  String password;
+
+  public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
+  @Column
   boolean enabled = true;
 
   public User() {
   }
 
-  public User(String username, boolean enabled) {
+  public User(String username, String password) {
     this.id = UUID.randomUUID();
     this.username = username;
-    this.enabled = enabled;
+    this.password = password;
   }
 
   public UUID getId() {
