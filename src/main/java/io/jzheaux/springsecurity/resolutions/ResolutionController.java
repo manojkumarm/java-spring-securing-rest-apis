@@ -25,19 +25,19 @@ public class ResolutionController {
 
 	@GetMapping("/resolutions")
   @PreAuthorize("hasAuthority('resolution:read')")
-	public Iterable<Resolution> read() {
+  public Iterable<Resolution> read() {
 		return this.resolutions.findAll();
 	}
 
 	@GetMapping("/resolution/{id}")
+  @PostAuthorize("returnObject.orElse(null)?.owner == authentication.name")
   @PreAuthorize("hasAuthority('resolution:read')")
   public Optional<Resolution> read(@PathVariable("id") UUID id) {
 		return this.resolutions.findById(id);
 	}
 
 	@PostMapping("/resolution")
-  @PreAuthorize("hasAuthority('resolution:write')")
-	public Resolution make(@CurrentUsername String owner, @RequestBody String text) {
+  public Resolution make(@CurrentUsername String owner, @RequestBody String text) {
 		Resolution resolution = new Resolution(text, owner);
 		return this.resolutions.save(resolution);
 	}
