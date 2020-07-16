@@ -37,6 +37,7 @@ public class ResolutionController {
 	}
 
 	@PostMapping("/resolution")
+  @PostAuthorize("returnObject.orElse(null)?.owner == authentication.name")
   public Resolution make(@CurrentUsername String owner, @RequestBody String text) {
 		Resolution resolution = new Resolution(text, owner);
 		return this.resolutions.save(resolution);
